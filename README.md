@@ -10,3 +10,8 @@
 [Live status](https://api.opendota.com/api/live)
 
 [combat log from replay file](https://github.com/mdnpascual/Dota2CLS)
+
+## Objective
+1. Ban-pick recommendation
+2. Success probabilit prediction at critical time (smoke, roshan, etc)
+3. Skill combination
