@@ -8,3 +8,5 @@
 [python yield](https://stackoverflow.com/questions/231767/what-does-the-yield-keyword-do)
 
 [Live status](https://api.opendota.com/api/live)
+
+[combat log from replay file](https://github.com/mdnpascual/Dota2CLS)
