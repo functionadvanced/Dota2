@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>DotA2 Real-Time Prediction</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="css/mdb.min.css" rel="stylesheet">
+  <!-- Your custom styles (optional) -->
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Start your project here-->
+  <div style="height: 50vh">
+    <div class="flex-center flex-column">
+      <h1 class="animated fadeIn mb-4">DotA 2 Real-Time Prediction</h1>
+
+      <h5 class="animated fadeIn mb-3">Thank you for using our product. We're glad you're with us.</h5>
+
+      <p class="animated fadeIn text-muted">Made at Purdue Esport Hackathon</p>
+    </div>
+  </div>
+
+
+
+  <!-- /Start your project here-->
+  <div class="container">
+  <h2>Real-Time Risk</h2>
+  <canvas id="horizontalBar" style="width:100%"></canvas>
+  </br>
+  <h2>Final Winner Prediction</h2>
+  <canvas id="WinnerChart" style="width:100%"></canvas>
+  </br>
+  <h2>Detailed Information</h2>
+  <table class="table" style="margin: auto;width: 100%" id="first_table">
+	  <thead class="grey lighten-2">
+		<tr>
+		  <th scope="col">#</th>
+		  <th scope="col">Hero</th>
+		  <th scope="col">Kill</th>
+		  <th scope="col">Death</th>
+		  <th scope="col" style="color:red">Risk</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		<tr>
+		  <th scope="row">1</th>
+		  <td><img src="https://api.opendota.com/apps/dota2/images/heroes/abaddon_sb.png"></img> Abaddon</td>
+		  <td>Otto</td>
+		  <td>@mdo</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">2</th>
+		  <td>Jacob</td>
+		  <td>Thornton</td>
+		  <td>@fat</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">3</th>
+		  <td>Larry</td>
+		  <td>the Bird</td>
+		  <td>@twitter</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">4</th>
+		  <td>Jacob</td>
+		  <td>Thornton</td>
+		  <td>@fat</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">5</th>
+		  <td>Larry</td>
+		  <td>the Bird</td>
+		  <td>@twitter</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">6</th>
+		  <td>Jacob</td>
+		  <td>Thornton</td>
+		  <td>@fat</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">7</th>
+		  <td>Larry</td>
+		  <td>the Bird</td>
+		  <td>@twitter</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">8</th>
+		  <td>Jacob</td>
+		  <td>Thornton</td>
+		  <td>@fat</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">9</th>
+		  <td>Larry</td>
+		  <td>the Bird</td>
+		  <td>@twitter</td>
+		  <td>@mdo</td>
+		</tr>
+		<tr>
+		  <th scope="row">10</th>
+		  <td>Jacob</td>
+		  <td>Thornton</td>
+		  <td>@fat</td>
+		  <td>@mdo</td>
+		</tr>
+	  </tbody>
+	</table>
+	
+	
+
+	</div>
+  <canvas id="myChart" style="max-width: 500px;margin:auto;margin-bottom:600px"></canvas>
+  <!-- SCRIPTS -->
+  <!-- JQuery -->
+  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="js/mdb.min.js"></script>
+  
+  
+	<script>
+	setInterval(function() {
+		$.getJSON("data.js", function(result){
+			$("#ajax_content").html("");
+			updateTable(result['hero_list'], result['hero_name'], result['hero_kill'], result['hero_death'], result['hero_risk']);
+			drawChart(result['hero_name'], result['hero_risk']);			
+			drawWinner(result['win_prob']);
+		});
+	}, 5000); //2 seconds
+	
+	
+	function updateTable(hero_list, hero_name, hero_kill, hero_death, hero_risk) {
+		var myTable = document.getElementById('first_table');
+		for (i = 0;i < 10;++i){
+			myTable.rows[i+1].cells[1].innerHTML = "<img src='https://api.opendota.com/apps/dota2/images/heroes/"+hero_list[i]+"_sb.png'></img> "+hero_name[i];
+			myTable.rows[i+1].cells[2].innerHTML = hero_kill[hero_list[i]];
+			myTable.rows[i+1].cells[3].innerHTML = hero_death[hero_list[i]];
+			//temp = Math.round(Math.random() * 100) / 100 ;
+			temp = Math.round(hero_risk[i] * 100) / 100;
+			
+			if (temp > 0.7){
+				myTable.rows[i+1].cells[4].style.color = 'red';
+				myTable.rows[i+1].cells[4].innerHTML = temp
+				+"<div style='background-color:red;width:"+(100*temp)+"px;height:5px;'></div>";
+			}
+			else {
+				myTable.rows[i+1].cells[4].style.color = 'green';
+				myTable.rows[i+1].cells[4].innerHTML = temp
+				+"<div style='background-color:green;width:"+(100*temp)+"px;height:5px;'></div>";
+			}
+		}
+	}
+	
+	
+	function drawChart(hero_name, hero_risk) {
+		//doughnut
+	  new Chart(document.getElementById("horizontalBar"), {
+    "type": "horizontalBar",
+    "data": {
+      "labels": hero_name,
+      "datasets": [{
+        "label":"The probability of getting killed",
+        "data": hero_risk,
+        "fill": false,
+        "backgroundColor": ['#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075'],
+        
+        "borderWidth": 1
+      }]
+    },
+    "options": {
+      "scales": {
+        "xAxes": [{
+          "ticks": {
+            "beginAtZero": true
+          }
+        }]
+      }
+    }
+  });
+	}
+	
+	function drawWinner(win_risk) {
+		var ctxD = document.getElementById("WinnerChart").getContext('2d');
+	  var myLineChart = new Chart(ctxD, {
+		type: 'doughnut',
+		data: {
+		  labels: ['Dire', 'Radiant'],
+		  datasets: [{
+			data: win_risk,
+			backgroundColor: ['red', 'green'],
+		  }]
+		},
+		options: {
+		  responsive: true
+		}
+	  });
+	}
+
+
+</script>
+</body>
+
+</html>
